@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -34,3 +35,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+=======
+# personal-bookmarks-app
+Full-stack bookmark manager featuring Supabase Auth, bookmark privacy controls, public user profiles, and email notifications.
+
+## Features
+
+- User authentication
+- Bookmark CRUD
+- Public and private bookmarks
+- Public user profiles
+- Welcome email on signup
+- Secure access control with Supabase RLS
+>>>>>>> fc646f65a1d6535369bf72d46d697bf7f707a7e0
