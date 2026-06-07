@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { signUp } from "@/actions/auth";
+import { signUp } from "@/app/actions/auth";
 
 const initialState = { error: null, success: false, message: null };
 

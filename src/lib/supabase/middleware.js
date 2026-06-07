@@ -59,8 +59,13 @@ export async function updateSession(request) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+  const isAuthCallback = pathname.startsWith("/auth/callback");
   const isAuthPage = pathname === "/login" || pathname === "/signup";
   const isProtectedRoute = pathname.startsWith("/dashboard");
+
+  if (isAuthCallback) {
+    return supabaseResponse;
+  }
 
   if (!user && isProtectedRoute) {
     // Clear stale auth cookies so /login is not bounced back to /dashboard.

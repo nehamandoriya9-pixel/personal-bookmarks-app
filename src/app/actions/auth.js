@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendWelcomeEmail } from "@/lib/email/send-welcome";
 import { getAppUrl } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -46,6 +47,22 @@ export async function signUp(prevState, formData) {
 
   if (error) {
     return { error: formatAuthError(error.message) };
+  }
+
+  if (data.user?.id && data.user.email) {
+    try {
+      const emailResult = await sendWelcomeEmail({
+        userId: data.user.id,
+        email: data.user.email,
+        supabase,
+      });
+
+      if (!emailResult.ok && !emailResult.skipped) {
+        console.error("[signup] Welcome email failed:", emailResult.error);
+      }
+    } catch (err) {
+      console.error("[signup] Welcome email threw:", err);
+    }
   }
 
   revalidatePath("/", "layout");
