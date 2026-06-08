@@ -1,12 +1,25 @@
 "use client";
-
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
+// import { useActionState } from "react";
 import { updateHandle } from "@/app/actions/bookmarks";
 
 const init = { error: null, success: false };
 
 export default function HandleForm({ currentHandle }) {
   const [state, formAction, isPending] = useActionState(updateHandle, init);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (state?.success) {
+      setShowSuccess(true);
+  
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [state?.success]);
 
   return (
     <form action={formAction} style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -30,7 +43,7 @@ export default function HandleForm({ currentHandle }) {
       </button>
 
       {state?.error && <p style={{ fontSize: 11, color: "#f87171", margin: 0 }}>{state.error}</p>}
-      {state?.success && <p style={{ fontSize: 11, color: "#34d399", margin: 0 }}>@{state.handle} saved!</p>}
+      {showSuccess && <p style={{ fontSize: 11, color: "#34d399", margin: 0 }}>@{state.handle} saved!</p>}
     </form>
   );
 }

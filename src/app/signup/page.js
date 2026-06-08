@@ -14,7 +14,7 @@ export default function SignupPage() {
       alternate={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-foreground hover:underline">
+          <Link href="/login" className="font-medium text-foreground text-white/35 hover:underline">
             Sign in
           </Link>
         </>

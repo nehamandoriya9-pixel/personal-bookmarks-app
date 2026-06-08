@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { signUp } from "@/app/actions/auth";
+import { OrbitInput } from "@/components/OrbitInput";
 
 const initialState = { error: null, success: false, message: null };
 
@@ -13,14 +14,29 @@ export function SignupForm() {
     return (
       <div className="space-y-4">
         <p
-          className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-300"
-          role="status"
+         className="
+           rounded-2xl
+    border border-white/20
+    bg-gradient-to-br
+    from-white/20
+    via-white/10
+    to-white/5
+    backdrop-blur-2xl
+    p-3
+    text-center
+    text-[15px]
+    font-medium
+    leading-relaxed
+    tracking-tight
+    text-white/65
+    shadow-[0_10px_40px_rgba(255,255,255,0.08)]
+       "
         >
           {state.message}
         </p>
         <Link
           href="/login"
-          className="inline-block text-sm font-medium text-foreground hover:underline"
+          className="inline-block text-sm font-medium text-foreground hover:underline text-white/35 translate-x-3"
         >
           Go to sign in
         </Link>
@@ -39,48 +55,87 @@ export function SignupForm() {
         </p>
       ) : null}
 
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Display name</span>
-        <span className="text-xs text-zinc-500">Optional</span>
-        <input
+      <label htmlFor="display_name" className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium text-white/60">Display name</span>
+        <span className="text-xs text-white/30">Optional</span>
+        <OrbitInput
+          id="display_name"
           name="display_name"
           type="text"
+          placeholder="Name"
           autoComplete="name"
           maxLength={100}
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-foreground outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          icon={<i className="ti ti-user" aria-hidden="true" />}
         />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Email</span>
-        <input
+      <label htmlFor="email" className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium text-white/60">Email</span>
+        <OrbitInput
+          id="email"
           name="email"
           type="email"
+          placeholder="you@example.com"
           autoComplete="email"
           required
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-foreground outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          icon={<i className="ti ti-mail" aria-hidden="true" />}
         />
       </label>
 
-      <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Password</span>
-        <input
+      <label htmlFor="password" className="flex flex-col gap-1.5 text-sm">
+        <span className="font-medium text-white/60">Password</span>
+        <OrbitInput
+          id="password"
           name="password"
           type="password"
+          placeholder="Min. 6 characters"
           autoComplete="new-password"
           required
           minLength={6}
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-foreground outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          icon={<i className="ti ti-lock" aria-hidden="true" />}
         />
       </label>
-
       <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
-      >
-        {pending ? "Creating account…" : "Create account"}
-      </button>
+  type="submit"
+  disabled={pending}
+  className="
+    group relative overflow-hidden
+    rounded-full
+    px-6 py-3
+    text-sm font-medium text-white
+
+    bg-white/[0.04]
+    backdrop-blur-xl
+    border border-white/10
+
+    transition-all duration-500
+
+    hover:bg-white/[0.08]
+    hover:border-white/20
+    hover:shadow-[0_8px_30px_rgba(255,255,255,0.08)]
+
+    active:scale-[0.98]
+    disabled:opacity-50
+  "
+>
+  {/* Glass Shine */}
+  <span
+    className="
+      absolute inset-0
+      -translate-x-[120%]
+      bg-gradient-to-r
+      from-transparent
+      via-white/15
+      to-transparent
+      group-hover:translate-x-[120%]
+      transition-transform duration-1000
+    "
+  />
+
+  <span className="relative z-10">
+    {pending ? "Creating account..." : "Create account"}
+  </span>
+</button>
     </form>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { addBookmark } from "@/app/actions/bookmarks";
 
 const init = { error: null, success: false };
@@ -20,6 +20,7 @@ const inputStyle = {
 
 function Toggle({ name, label, defaultChecked = false }) {
   const [on, setOn] = useState(defaultChecked);
+
   return (
     <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", userSelect: "none" }}>
       <input type="hidden" name={name} value={on ? "on" : "off"} />
@@ -45,6 +46,19 @@ function Toggle({ name, label, defaultChecked = false }) {
 export default function AddBookmarkForm() {
   const [state, formAction, isPending] = useActionState(addBookmark, init);
   const [expanded, setExpanded] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (state?.success) {
+      setShowSuccess(true);
+  
+      const timer = setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+  
+      return () => clearTimeout(timer);
+    }
+  }, [state?.success]);
 
   return (
     <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -53,7 +67,7 @@ export default function AddBookmarkForm() {
           {state.error}
         </p>
       )}
-      {state?.success && (
+      {showSuccess && (
         <p style={{ fontSize: 12, color: "#34d399", background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)", borderRadius: 8, padding: "8px 12px", margin: 0 }}>
           Bookmark saved.
         </p>

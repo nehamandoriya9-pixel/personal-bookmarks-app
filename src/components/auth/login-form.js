@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { signIn } from "@/app/actions/auth";
+import { OrbitInput } from "@/components/OrbitInput";
 
 const initialState = { error: null, success: false, message: null };
 
@@ -31,34 +32,69 @@ export function LoginForm({ authError, authMessage }) {
       ) : null}
 
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Email</span>
-        <input
+        <span className="font-medium text-white/60 translate-x-2">Email</span>
+        <OrbitInput
           name="email"
           type="email"
+          placeholder="you@example.com"
           autoComplete="email"
           required
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-foreground outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          icon={<i className="ti ti-mail" aria-hidden="true" />}
         />
       </label>
 
       <label className="flex flex-col gap-1.5 text-sm">
-        <span className="font-medium">Password</span>
-        <input
+        <span className="font-medium text-white/60 translate-x-2">Password</span>
+        <OrbitInput
           name="password"
           type="password"
+          placeholder="Enter your password"
           autoComplete="current-password"
           required
           minLength={6}
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-foreground outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          icon={<i className="ti ti-lock" aria-hidden="true" />}
         />
       </label>
 
       <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-foreground px-4 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-50"
-      >
+  type="submit"
+  disabled={pending}
+  className="
+    group relative overflow-hidden
+    rounded-full
+    px-6 py-3
+    text-sm font-medium text-white
+
+    bg-white/[0.04]
+    backdrop-blur-xl
+    border border-white/10
+
+    transition-all duration-500
+
+    hover:bg-white/[0.08]
+    hover:border-white/20
+    hover:shadow-[0_8px_30px_rgba(255,255,255,0.08)]
+
+    active:scale-[0.98]
+    disabled:opacity-50
+  "
+>
+  {/* Glass Shine */}
+  <span
+    className="
+      absolute inset-0
+      -translate-x-[120%]
+      bg-gradient-to-r
+      from-transparent
+      via-white/15
+      to-transparent
+      group-hover:translate-x-[120%]
+      transition-transform duration-1000
+    "
+  />
+   <span className="relative z-10">
         {pending ? "Signing in…" : "Sign in"}
+        </span>
       </button>
     </form>
   );

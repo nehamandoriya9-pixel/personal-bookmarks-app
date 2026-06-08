@@ -110,7 +110,7 @@ function BookmarkRow({ bookmark }) {
             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
               <a href={bookmark.url} target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: 13, fontWeight: 500, color: "rgba(255,255,255,0.78)", textDecoration: "none", maxWidth: "60%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                {bookmark.title}
+                {bookmark.title}  ↗
               </a>
               {bookmark.is_favorite && (
                 <span style={{ fontSize: 10, color: "#d4b96a" }}>★</span>

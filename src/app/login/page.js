@@ -38,7 +38,7 @@ export default async function LoginPage({ searchParams }) {
       alternate={
         <>
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-foreground hover:underline">
+          <Link href="/signup" className="font-medium text-foreground text-white/35 hover:underline">
             Sign up
           </Link>
         </>
