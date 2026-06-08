@@ -10,26 +10,27 @@ export async function generateMetadata({ params }) {
 export default async function PublicProfilePage({ params }) {
   const { handle } = await params;
 
-  // No getRequiredUser() here — this page is intentionally public
   const supabase = await createClient();
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("id, display_name, email")
-    .ilike("handle", handle) // case-insensitive
+    .ilike("handle", handle)
     .maybeSingle();
 
   if (!profile) notFound();
 
-  // getPublicBookmarks always hard-filters is_public = true
-  // RLS also enforces this at the DB level — two layers, zero leakage
   const bookmarks = await getPublicBookmarks(profile.id);
 
   const displayName = profile.display_name || profile.email || `@${handle}`;
 
   return (
     <div style={{ minHeight: "100vh", background: "#080808", fontFamily: "'DM Sans', system-ui, sans-serif", color: "#e8e6e0" }}>
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap'); * { box-sizing: border-box; }`}</style>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap');
+        * { box-sizing: border-box; }
+        .bookmark-card:hover { border-color: rgba(255,255,255,0.12) !important; background: #141414 !important; }
+      `}</style>
 
       <div style={{ maxWidth: 680, margin: "0 auto", padding: "64px 24px" }}>
         {/* Profile header */}
@@ -58,15 +59,13 @@ export default async function PublicProfilePage({ params }) {
 
               return (
                 <a key={b.id} href={b.url} target="_blank" rel="noopener noreferrer"
-                  style={{ display: "flex", alignItems: "flex-start", gap: 12, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, background: "#111", padding: "16px 20px", textDecoration: "none", transition: "border-color 0.15s" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.11)"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"}
+                  className="bookmark-card"
+                  style={{ display: "flex", alignItems: "flex-start", gap: 12, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, background: "#111", padding: "16px 20px", textDecoration: "none", transition: "border-color 0.15s, background 0.15s" }}
                 >
                   <img
                     src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
                     alt="" width={15} height={15}
                     style={{ marginTop: 2, borderRadius: 3, opacity: 0.5, flexShrink: 0 }}
-                    onError={e => e.target.style.display = "none"}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: 14, fontWeight: 500, color: "rgba(255,255,255,0.75)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.title}</p>

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-
+import { createPublicClient } from "@/lib/supabase/public"; 
 // All columns we select — update this if you add columns to the table
 const BOOKMARK_COLUMNS =
   "id, user_id, title, url, description, tags, is_favorite, is_public, created_at, updated_at";
@@ -28,13 +28,13 @@ export async function getBookmarks(userId) {
  * @param {string} userId
  */
 export async function getPublicBookmarks(userId) {
-  const supabase = await createClient();
+  const supabase = createPublicClient(); // ← authenticated client nahi
 
   const { data, error } = await supabase
     .from("bookmarks")
     .select("id, title, url, description, tags, created_at")
     .eq("user_id", userId)
-    .eq("is_public", true) // explicit — never omit this
+    .eq("is_public", true)
     .order("created_at", { ascending: false });
 
   if (error) throw error;

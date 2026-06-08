@@ -295,7 +295,7 @@ export default async function DashboardPage() {
             </p>
           )}
 
-          <HandleForm currentHandle={profile?.handle ?? ""} />
+          <HandleForm currentHandle={profile?.handle} />
         </section>
 
         {/* Add Bookmark */}

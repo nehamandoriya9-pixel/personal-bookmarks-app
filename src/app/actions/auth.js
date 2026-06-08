@@ -54,34 +54,34 @@ export async function signUp(prevState, formData) {
   const user = data.user;
 
   /* ---------------- CREATE PROFILE ---------------- */
-  if (user?.id) {
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: user.id,
-      display_name: displayName || null,
-      email: user.email,
-    });
+  // if (user?.id) {
+  //   const { error: profileError } = await supabase.from("profiles").insert({
+  //     id: user.id,
+  //     display_name: displayName || null,
+  //     email: user.email,
+  //   });
 
-    if (profileError) {
-      console.error("[signup] Profile insert failed:", profileError.message);
-    }
-  }
+  //   if (profileError) {
+  //     console.error("[signup] Profile insert failed:", profileError.message);
+  //   }
+  // }
 
   /* ---------------- SEND WELCOME EMAIL ---------------- */
-  if (user?.id && user.email) {
-    try {
-      const emailResult = await sendWelcomeEmail({
-        userId: user.id,
-        email: user.email,
-        supabase,
-      });
+  // if (user?.id && user.email) {
+  //   try {
+  //     const emailResult = await sendWelcomeEmail({
+  //       userId: user.id,
+  //       email: user.email,
+  //       supabase,
+  //     });
 
-      if (!emailResult.ok && !emailResult.skipped) {
-        console.error("[signup] Welcome email failed:", emailResult.error);
-      }
-    } catch (err) {
-      console.error("[signup] Welcome email error:", err);
-    }
-  }
+  //     if (!emailResult.ok && !emailResult.skipped) {
+  //       console.error("[signup] Welcome email failed:", emailResult.error);
+  //     }
+  //   } catch (err) {
+  //     console.error("[signup] Welcome email error:", err);
+  //   }
+  // }
 
   revalidatePath("/", "layout");
 
