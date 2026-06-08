@@ -15,11 +15,13 @@ function formatAuthError(message) {
   const lower = message.toLowerCase();
 
   if (lower.includes("email not confirmed")) {
-    return "Your email is not confirmed yet. Check your inbox for the confirmation link, then sign in again.";
+    return "Your email is not confirmed yet. Check your inbox and verify your email.";
   }
 
   return message;
 }
+
+/* ---------------- SIGN UP ---------------- */
 
 export async function signUp(prevState, formData) {
   const email = getField(formData, "email");
@@ -49,11 +51,27 @@ export async function signUp(prevState, formData) {
     return { error: formatAuthError(error.message) };
   }
 
-  if (data.user?.id && data.user.email) {
+  const user = data.user;
+
+  /* ---------------- CREATE PROFILE ---------------- */
+  if (user?.id) {
+    const { error: profileError } = await supabase.from("profiles").insert({
+      id: user.id,
+      display_name: displayName || null,
+      email: user.email,
+    });
+
+    if (profileError) {
+      console.error("[signup] Profile insert failed:", profileError.message);
+    }
+  }
+
+  /* ---------------- SEND WELCOME EMAIL ---------------- */
+  if (user?.id && user.email) {
     try {
       const emailResult = await sendWelcomeEmail({
-        userId: data.user.id,
-        email: data.user.email,
+        userId: user.id,
+        email: user.email,
         supabase,
       });
 
@@ -61,24 +79,25 @@ export async function signUp(prevState, formData) {
         console.error("[signup] Welcome email failed:", emailResult.error);
       }
     } catch (err) {
-      console.error("[signup] Welcome email threw:", err);
+      console.error("[signup] Welcome email error:", err);
     }
   }
 
   revalidatePath("/", "layout");
 
-  // Email confirmation disabled → session returned → go to dashboard.
+  /* ---------------- REDIRECT FLOW ---------------- */
   if (data.session) {
     redirect("/dashboard");
   }
 
-  // Email confirmation enabled → no session yet → stay on signup with instructions.
   return {
     success: true,
     message:
-      "Account created. Check your email for a confirmation link, then sign in.",
+      "Account created successfully. Please verify your email before signing in.",
   };
 }
+
+/* ---------------- SIGN IN ---------------- */
 
 export async function signIn(prevState, formData) {
   const email = getField(formData, "email");
@@ -103,9 +122,13 @@ export async function signIn(prevState, formData) {
   redirect("/dashboard");
 }
 
+/* ---------------- SIGN OUT ---------------- */
+
 export async function signOut() {
   const supabase = await createClient();
+
   await supabase.auth.signOut();
+
   revalidatePath("/", "layout");
   redirect("/login");
 }

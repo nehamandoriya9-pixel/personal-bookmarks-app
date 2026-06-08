@@ -94,8 +94,6 @@ Most planned features are complete. The only remaining item is welcome email del
 
 ## What Went Wrong & How I Fixed It
 
-This is the honest part.
-
 **The dashboard was crashing for logged-out users.** It was calling `user.id` without checking if `user` was actually there. Fixed by writing a `getRequiredUser()` helper that redirects to `/login` if there's no session — now every protected route and server action calls this first.
 
 **Files were going to the wrong place.** This project uses a `src/` directory, which means the `@/` alias resolves to `src/`, not the project root. New files were placed at the root so all imports were failing with `Module not found`. Moved everything into `src/` and that cleared it.
@@ -115,11 +113,22 @@ insert into public.profiles (id, email, display_name)
 select id, email, null from auth.users
 on conflict (id) do nothing;
 ```
+**Profiles were not showing on the dashboard after signup.**
+The issue was that while Supabase Auth was creating the user, there was no corresponding entry in the profiles table. Because of this, any dashboard logic that depended on profiles.id → auth.users.id mapping returned null.
+
+Fixed it by adding an automatic profile creation step inside the signUp server action. After successful authentication, a row is now inserted into profiles with the user’s id, email, and optional display_name.
+
+**Public bookmarks were also not appearing correctly.**
+The dashboard was only fetching user-specific data and not correctly handling the is_public filter logic from the bookmarks table.
+
+**Fixed by ensuring:**
+Bookmarks query properly includes is_public = true for public visibility
+User-specific bookmarks are always filtered using user_id = auth.uid()
+RLS policies correctly separate private vs public access at the database level
 
 **Welcome emails only going to one address.** Resend in test mode only sends to the verified account owner's email — anyone else just doesn't get it. The code is correct and executes without errors; it's a Resend plan limitation. Needs a verified domain for production.
 
 **Hit Supabase's email rate limit.** Was creating new test accounts repeatedly while debugging the confirmation flow. Once I understood what was happening, switched to reusing existing accounts and turned off email confirmation for local testing.
-
 
 ## Security
 
