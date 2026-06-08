@@ -130,6 +130,11 @@ RLS policies correctly separate private vs public access at the database level
 
 **Hit Supabase's email rate limit.** Was creating new test accounts repeatedly while debugging the confirmation flow. Once I understood what was happening, switched to reusing existing accounts and turned off email confirmation for local testing.
 
+**Private bookmarks were leaking on public profile pages.**
+The issue was that `getPublicBookmarks` was using the authenticated server  client (`createClient`) instead of an anon client. Because the server client  attaches the user's session, Supabase RLS was evaluating policies with full user context — causing private bookmarks to slip through even with `is_public = true` filter explicitly set in the query.
+
+Fixed by creating a separate anon Supabase client (no session attached) specifically for public data fetching. Now RLS enforces `is_public = true` strictly, and private bookmarks are never exposed on the `/@handle` page.
+
 ## Security
 
 Privacy is not a UI detail — it is enforced at the database level.
