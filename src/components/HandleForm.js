@@ -8,10 +8,16 @@ const init = { error: null, success: false };
 export default function HandleForm({ currentHandle }) {
   const [state, formAction, isPending] = useActionState(updateHandle, init);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [handle, setHandle] = useState(currentHandle || "");
 
+  useEffect(() => {
+    if (currentHandle) setHandle(currentHandle);
+  }, [currentHandle]);
+  
   useEffect(() => {
     if (state?.success) {
       setShowSuccess(true);
+      setHandle(state.handle ?? "");
   
       const timer = setTimeout(() => {
         setShowSuccess(false);
@@ -28,7 +34,8 @@ export default function HandleForm({ currentHandle }) {
         <input
           name="handle"
           type="text"
-          defaultValue={currentHandle}
+          value={handle}                         
+          onChange={(e) => setHandle(e.target.value)}
           placeholder="your-handle"
           minLength={3}
           maxLength={30}

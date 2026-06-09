@@ -2,6 +2,10 @@
 
 import { useState, useActionState, useEffect} from "react";
 import { editBookmark, removeBookmark, toggleFavorite } from "@/app/actions/bookmarks";
+import { TbEdit } from "react-icons/tb";
+import { MdDeleteForever } from "react-icons/md";
+import { FaRegStar } from "react-icons/fa";
+import { MdOutlineStarPurple500 } from "react-icons/md";
 
 const inputStyle = {
   width: "100%",
@@ -148,14 +152,14 @@ function BookmarkRow({ bookmark }) {
               <input type="hidden" name="is_favorite" value={String(bookmark.is_favorite)} />
               <button type="submit" title={bookmark.is_favorite ? "Unfavorite" : "Favorite"}
                 style={{ padding: "5px 7px", borderRadius: 6, background: "none", border: "none", cursor: "pointer", fontSize: 12, color: bookmark.is_favorite ? "#d4b96a" : "rgba(255,255,255,0.25)" }}>
-                {bookmark.is_favorite ? "★" : "☆"}
+                {bookmark.is_favorite ? <MdOutlineStarPurple500 className="w-4 h-4 text-yellow-500"/> : <FaRegStar className="w-4 h-4 text-yellow-100"/>}
               </button>
             </form>
 
             {/* Edit */}
             <button onClick={() => setEditing(true)} title="Edit"
               style={{ padding: "5px 7px", borderRadius: 6, background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "rgba(255,255,255,0.25)" }}>
-              ✎
+              <TbEdit className="w-4 h-4 text-yellow-100" />
             </button>
 
             {/* Delete */}
@@ -164,7 +168,7 @@ function BookmarkRow({ bookmark }) {
               <button type="submit" title="Delete"
                 onClick={e => { if (!confirm(`Delete "${bookmark.title}"?`)) e.preventDefault(); }}
                 style={{ padding: "5px 7px", borderRadius: 6, background: "none", border: "none", cursor: "pointer", fontSize: 12, color: "rgba(255,255,255,0.25)" }}>
-                ✕
+                <MdDeleteForever className="w-4 h-4 text-yellow-100"/>
               </button>
             </form>
           </div>
@@ -178,12 +182,24 @@ function BookmarkRow({ bookmark }) {
 
 export default function BookmarkList({ bookmarks }) {
   const [filter, setFilter] = useState("all");
+  const [query, setQuery] = useState("");
 
   const filtered = bookmarks.filter(b => {
+    
     if (filter === "public") return b.is_public;
     if (filter === "private") return !b.is_public;
     if (filter === "favorites") return b.is_favorite;
     return true;
+  }).filter(b => {
+    
+    if (!query) return true;
+    const q = query.toLowerCase();
+    return (
+      b.title?.toLowerCase().includes(q) ||
+      b.url?.toLowerCase().includes(q) ||
+      b.description?.toLowerCase().includes(q) ||
+      b.tags?.some(t => t.toLowerCase().includes(q))
+    );
   });
 
   if (bookmarks.length === 0) {
@@ -196,6 +212,24 @@ export default function BookmarkList({ bookmarks }) {
 
   return (
     <div>
+        <input
+        type="text"
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search bookmarks…"
+        style={{
+          width: "100%",
+          marginBottom: 10,
+          background: "rgba(255,255,255,0.04)",
+          border: "1px solid rgba(255,255,255,0.08)",
+          borderRadius: 8,
+          padding: "8px 12px",
+          fontSize: 13,
+          color: "rgba(255,255,255,0.75)",
+          outline: "none",
+          fontFamily: "inherit",
+        }}
+      />
       {/* Filter tabs */}
       <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
         {["all", "public", "private", "favorites"].map(f => (
@@ -212,7 +246,9 @@ export default function BookmarkList({ bookmarks }) {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {filtered.length === 0
-          ? <p style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center", padding: 32 }}>No bookmarks match this filter.</p>
+          ? <p style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", textAlign: "center", padding: 32 }}>
+              {query ? `No results for "${query}"` : "No bookmarks match this filter."}
+            </p>
           : filtered.map(b => <BookmarkRow key={b.id} bookmark={b} />)
         }
       </div>

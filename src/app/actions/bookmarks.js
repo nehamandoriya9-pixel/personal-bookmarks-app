@@ -162,9 +162,11 @@ export async function toggleFavorite(formData) {
 // ── Profile / handle ──────────────────────────────────────────
 
 export async function updateHandle(prevState, formData) {
+  console.log("formData entries:", Object.fromEntries(formData))
   const { supabase, user } = await getRequiredUser();
 
   const handle = field(formData, "handle").toLowerCase();
+  console.log("handle:", handle);
 
   const { ok, error: handleErr } = validateHandle(handle);
   if (!ok) return { error: handleErr };
