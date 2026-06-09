@@ -47,6 +47,8 @@ export async function signUp(prevState, formData) {
     },
   });
 
+  console.log("[signup] data:", JSON.stringify(data));
+  console.log("[signup] error:", error);
   if (error) {
     return { error: formatAuthError(error.message) };
   }
@@ -67,21 +69,21 @@ export async function signUp(prevState, formData) {
   // }
 
   /* ---------------- SEND WELCOME EMAIL ---------------- */
-  // if (user?.id && user.email) {
-  //   try {
-  //     const emailResult = await sendWelcomeEmail({
-  //       userId: user.id,
-  //       email: user.email,
-  //       supabase,
-  //     });
+  if (user?.id && user.email) {
+    try {
+      const emailResult = await sendWelcomeEmail({
+        userId: user.id,
+        email: user.email,
+        supabase,
+      });
 
-  //     if (!emailResult.ok && !emailResult.skipped) {
-  //       console.error("[signup] Welcome email failed:", emailResult.error);
-  //     }
-  //   } catch (err) {
-  //     console.error("[signup] Welcome email error:", err);
-  //   }
-  // }
+      if (!emailResult.ok && !emailResult.skipped) {
+        console.error("[signup] Welcome email failed:", emailResult.error);
+      }
+    } catch (err) {
+      console.error("[signup] Welcome email error:", err);
+    }
+  }
 
   revalidatePath("/", "layout");
 
